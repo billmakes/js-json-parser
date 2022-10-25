@@ -4,8 +4,8 @@ class Lexer {
   constructor(input) {
     this.input = input;
     this.position = 0; // current position in input
-    this.readPosition = 0; // next position in input
-    this.ch = ''; // current character under examination
+    this.readPosition = 1; // next position in input
+    this.ch = this.input[0]; // current character under examination
   }
 
   readChar() {

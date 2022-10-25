@@ -24,7 +24,7 @@ class Parser {
     this.curToken = null;
     this.peekToken = null;
 
-    this.nextToken();
+    // read in the next two tokens
     this.nextToken();
     this.nextToken();
   }
@@ -101,18 +101,11 @@ class Parser {
   curTokenIs(t) {
     return this.curToken?.type == t;
   }
-
-  peekTokenIs(t) {
-    return this.peekToken?.type == t;
-  }
 }
 
 (function main() {
   const input =
     '{"data":{"hello":{"testArr":["item","item2"],"hi":"sup","test":{"ok":"cool","newObj":{"key":"this is a string"}}}}}';
-  // const input =
-  //   '[{"hello":{"hi":"sup","test":{ "ok":"cool" }}},{"newObj":"val"}]';
-  //const input = '{"hello":{"hi":"sup"}}';
 
   let p = new Parser(input);
   let result = p.parse();

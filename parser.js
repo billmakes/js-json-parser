@@ -3,7 +3,7 @@ const TOKEN = require('./token');
 
 const json_example = JSON.stringify({
   menu: {
-    id: 'file',
+    id: 1,
     value: 'File',
     popup: {
       menuitem: [
@@ -38,53 +38,37 @@ class Parser {
 
   parse() {
     let result;
-    console.log('PARSING', this.curToken);
     if (this.curTokenIs(TOKEN['LBRACE'])) {
-      this.nextToken();
       result = this.parseObj();
-    }
-
-    if (this.curTokenIs(TOKEN['LBRACKET'])) {
-      this.nextToken();
+    } else if (this.curTokenIs(TOKEN['LBRACKET'])) {
       result = this.parseArr();
-    }
-
-    if (this.curTokenIs(TOKEN['QUOTE'])) {
+    } else if (this.curTokenIs(TOKEN['QUOTE'])) {
       result = this.parseString();
-      this.nextToken();
-    }
-
-    if (this.curTokenIs(TOKEN['VALUE'])) {
+    } else if (this.curTokenIs(TOKEN['IDENT'])) {
       result = this.parseString();
-      this.nextToken();
-    }
-
-    if (this.curTokenIs(TOKEN['IDENT'])) {
-      result = this.parseString();
-      this.nextToken();
-    }
-
-    if (this.curTokenIs(TOKEN['COMMA'])) {
+    } else if (this.curTokenIs(TOKEN['INT'])) {
+      result = this.parseNumber();
+    } else {
       this.nextToken();
     }
 
     return result;
   }
 
-  parseArr(a = []) {
-    console.log('we in an array rn lol', this.curToken);
+  parseArr() {
     this.nextToken();
-    const arr = a.length ? a : [];
+    const arr = [];
     while (!this.curTokenIs(TOKEN['RBRACKET'])) {
-      if (this.curTokenIs(TOKEN['IDENT'])) {
-        arr.push(this.curToken.literal);
+      let item = this.parse();
+      if (item) {
+        arr.push(item);
       }
-      this.nextToken();
     }
     return arr;
   }
 
   parseObj() {
+    this.nextToken();
     let obj = {};
     while (!this.curTokenIs(TOKEN['RBRACE'])) {
       this.nextToken();
@@ -99,10 +83,16 @@ class Parser {
         }
       }
     }
+    this.nextToken();
     return obj;
   }
 
+  parseNumber() {
+    return this.curToken.literal;
+  }
+
   parseString() {
+    this.nextToken();
     if (this.curTokenIs(TOKEN['IDENT'])) {
       let str = this.curToken.literal;
       this.nextToken();
@@ -110,14 +100,7 @@ class Parser {
     }
   }
 
-  parseValue() {
-    this.nextToken();
-    const value = this.curToken.literal;
-    return value;
-  }
-
   curTokenIs(t) {
-    //console.log(t);
     return this.curToken?.type == t;
   }
 
@@ -153,4 +136,5 @@ class Parser {
 
   console.log(input);
   console.log(JSON.stringify(result));
+  console.log(JSON.stringify(result) === input);
 })();

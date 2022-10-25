@@ -54,13 +54,15 @@ class Lexer {
         break;
       default:
         if (this.isLetter(this.ch)) {
-          tok = this.newToken(TOKEN['IDENT'], this.readIdentifier());
-        } else if (this.isDigit(this.ch)) {
-          // TODO
+          let literal = this.readIdentifier();
+          if (this.isDigit(literal)) {
+            tok = this.newToken(TOKEN['INT'], parseInt(literal, 10));
+          } else {
+            tok = this.newToken(TOKEN['IDENT'], literal);
+          }
           break;
         } else {
           tok = this.newToken(TOKEN['ILLEGAL'], this.ch);
-          console.log(tok);
         }
     }
 
@@ -81,7 +83,7 @@ class Lexer {
   }
 
   isLetter(ch) {
-    return ch.match(/[a-zA-Z0-9\s]/i);
+    return ch.match(/[a-zA-Z0-9()\s]/i);
   }
 
   isDigit(ch) {
@@ -94,14 +96,6 @@ class Lexer {
     } else {
       return this.input[this.readPosition];
     }
-  }
-
-  readValue() {
-    let position = this.position;
-    while (this.ch !== TOKEN['QUOTE']) {
-      this.readChar();
-    }
-    return this.input.slice(position, this.position);
   }
 
   readIdentifier() {

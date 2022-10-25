@@ -1,18 +1,4 @@
-const TOKEN = {
-  LBRACKET: '[',
-  RBRACKET: ']',
-  LBRACE: '{',
-  RBRACE: '}',
-  QUOTE: '"',
-  COLON: ':',
-  COMMA: ',',
-  IDENT: 'IDENT',
-  VALUE: 'VALUE',
-  INT: 'INT',
-  BOOL: 'BOOL',
-  NULL: 'NULL',
-  ILLEGAL: 'ILLEGAL',
-};
+const TOKEN = require('./token');
 
 class Lexer {
   constructor(input) {
@@ -58,13 +44,6 @@ class Lexer {
         tok = this.newToken(TOKEN['RBRACKET'], this.ch);
         break;
       case ':':
-        if (this.peekChar() == TOKEN['QUOTE']) {
-          // this.readChar();
-          // this.readChar();
-          tok = this.newToken(TOKEN['VALUE'], this.readValue());
-          console.log(tok);
-          //break;
-        }
         tok = this.newToken(TOKEN['COLON'], this.ch);
         break;
       case '"':

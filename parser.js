@@ -1,20 +1,5 @@
 const Lexer = require('./lexer');
-
-const TOKEN = {
-  LBRACKET: '[',
-  RBRACKET: '[',
-  LBRACE: '{',
-  RBRACE: '}',
-  QUOTE: '"',
-  COLON: ':',
-  COMMA: ',',
-  IDENT: 'IDENT',
-  VALUE: 'VALUE',
-  INT: 'INT',
-  BOOL: 'BOOL',
-  NULL: 'NULL',
-  ILLEGAL: 'ILLEGAL',
-};
+const TOKEN = require('./token');
 
 const json_example = JSON.stringify({
   menu: {
@@ -161,9 +146,9 @@ class Parser {
   //   '[{"hello":{"hi":"sup","test":{ "ok":"cool" }}},{"newObj":"val"}]';
   //const input = '{"hello":{"hi":"sup"}}';
 
-  let p = new Parser(json_example);
+  let p = new Parser(input);
   let result = p.parse();
 
-  console.log(json_example);
+  console.log(input);
   console.log(JSON.stringify(result));
 })();

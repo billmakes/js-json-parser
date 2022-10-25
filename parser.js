@@ -27,8 +27,6 @@ class Parser {
     this.nextToken();
     this.nextToken();
     this.nextToken();
-
-    this.errors = [];
   }
 
   nextToken() {
@@ -107,21 +105,6 @@ class Parser {
   peekTokenIs(t) {
     return this.peekToken?.type == t;
   }
-
-  expectPeek(t) {
-    if (this.peekTokenIs(t)) {
-      this.nextToken();
-      return true;
-    } else {
-      this.peekError(t);
-      return false;
-    }
-  }
-
-  peekError(t) {
-    const msg = `Peek error, recieved: ${t}`;
-    this.errors.push(msg);
-  }
 }
 
 (function main() {
@@ -137,4 +120,5 @@ class Parser {
   console.log(input);
   console.log(JSON.stringify(result));
   console.log(JSON.stringify(result) === input);
+  console.log(result);
 })();

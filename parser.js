@@ -38,6 +38,7 @@ class Parser {
 
   parse() {
     let result;
+    console.log('PARSING', this.curToken);
     if (this.curTokenIs(TOKEN['LBRACE'])) {
       this.nextToken();
       result = this.parseObj();
@@ -71,13 +72,14 @@ class Parser {
   }
 
   parseArr(a = []) {
-    let arr = a;
-    let item = this.parse();
-    arr.push(item);
+    console.log('we in an array rn lol', this.curToken);
     this.nextToken();
-    if (this.curTokenIs(TOKEN['COMMA'])) {
+    const arr = a.length ? a : [];
+    while (!this.curTokenIs(TOKEN['RBRACKET'])) {
+      if (this.curTokenIs(TOKEN['IDENT'])) {
+        arr.push(this.curToken.literal);
+      }
       this.nextToken();
-      this.parseArr(arr);
     }
     return arr;
   }

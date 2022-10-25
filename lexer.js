@@ -81,7 +81,7 @@ class Lexer {
   }
 
   isLetter(ch) {
-    return ch.match(/[a-zA-Z\s]/i);
+    return ch.match(/[a-zA-Z0-9\s]/i);
   }
 
   isDigit(ch) {

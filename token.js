@@ -1,6 +1,6 @@
 const TOKEN = {
   LBRACKET: '[',
-  RBRACKET: '[',
+  RBRACKET: ']',
   LBRACE: '{',
   RBRACE: '}',
   QUOTE: '"',

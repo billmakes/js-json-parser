@@ -55,12 +55,20 @@ class Lexer {
       default:
         if (this.isLetter(this.ch)) {
           let literal = this.readIdentifier();
-          if (this.isDigit(literal)) {
-            tok = this.newToken(TOKEN['INT'], parseInt(literal, 10));
+          if (this.isDigit(literal) && this.peekBehind() != '"') {
+            tok = this.newToken(TOKEN['INT'], parseFloat(literal));
           } else {
-            tok = this.newToken(TOKEN['IDENT'], literal);
+            if (
+              (literal === 'false' || literal === 'true') &&
+              this.peekBehind() != '"'
+            ) {
+              tok = this.newToken(TOKEN['BOOL'], literal);
+            } else if (this.peekBehind() != '"' && literal === 'null') {
+              tok = this.newToken(TOKEN['NULL'], literal);
+            } else {
+              tok = this.newToken(TOKEN['IDENT'], literal);
+            }
           }
-          break;
         } else {
           tok = this.newToken(TOKEN['ILLEGAL'], this.ch);
         }
@@ -83,19 +91,15 @@ class Lexer {
   }
 
   isLetter(ch) {
-    return ch.match(/[a-zA-Z0-9()\s]/i);
+    return ch.match(/[a-zA-Z0-9()#*.?!_'\s]/i);
   }
 
   isDigit(ch) {
     return !isNaN(ch);
   }
 
-  peekChar() {
-    if (this.readPosition >= this.input.length) {
-      return 0;
-    } else {
-      return this.input[this.readPosition];
-    }
+  peekBehind() {
+    return this.input[this.readPosition - 1];
   }
 
   readIdentifier() {

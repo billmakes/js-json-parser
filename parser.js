@@ -1,20 +1,6 @@
 const Lexer = require('./lexer');
 const TOKEN = require('./token');
 
-const json_example = JSON.stringify({
-  menu: {
-    id: 1,
-    value: 'File',
-    popup: {
-      menuitem: [
-        { value: 'New', onclick: 'CreateNewDoc()' },
-        { value: 'Open', onclick: 'OpenDoc()' },
-        { value: 'Close', onclick: 'CloseDoc()' },
-      ],
-    },
-  },
-});
-
 class Parser {
   constructor(input) {
     this.l = new Lexer(input);
@@ -42,6 +28,10 @@ class Parser {
       result = this.parseArr();
     } else if (this.curTokenIs(TOKEN['QUOTE'])) {
       result = this.parseString();
+    } else if (this.curTokenIs(TOKEN['NULL'])) {
+      result = this.parseNull();
+    } else if (this.curTokenIs(TOKEN['BOOL'])) {
+      result = this.parseBool();
     } else if (this.curTokenIs(TOKEN['IDENT'])) {
       result = this.parseString();
     } else if (this.curTokenIs(TOKEN['INT'])) {
@@ -76,13 +66,38 @@ class Parser {
         if (this.curTokenIs(TOKEN['COLON'])) {
           // skip colon
           this.nextToken();
-          // parse next token as value
-          obj[key] = this.parse();
+          let value = this.parse();
+          if (value?.type === 'bool') {
+            // hack
+            Object.assign(obj, { [key]: value.val });
+            this.nextToken();
+            return obj;
+          } else if (value?.type === 'null') {
+            // another hack
+            Object.assign(obj, { [key]: value.val });
+            this.nextToken();
+            return obj;
+          } else {
+            obj[key] = value;
+          }
         }
       }
     }
     this.nextToken();
     return obj;
+  }
+
+  parseNull() {
+    return { type: 'null', val: null };
+  }
+
+  parseBool() {
+    if (this.curToken.literal === 'true') {
+      // hack
+      return { type: 'bool', val: true };
+    } else {
+      return { type: 'bool', val: false };
+    }
   }
 
   parseNumber() {
@@ -103,15 +118,4 @@ class Parser {
   }
 }
 
-(function main() {
-  const input =
-    '{"data":{"hello":{"testArr":["item","item2"],"hi":"sup","test":{"ok":"cool","newObj":{"key":"this is a string"}}}}}';
-
-  let p = new Parser(input);
-  let result = p.parse();
-
-  console.log(input);
-  console.log(JSON.stringify(result));
-  console.log(JSON.stringify(result) === input);
-  console.log(result);
-})();
+module.exports = Parser;
